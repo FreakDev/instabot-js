@@ -1,0 +1,20 @@
+{
+  "name": "e-insta-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^2.0.8",
+    "electron-packager": "^12.1.1"
+  },
+  "dependencies": {
+    "instagrambotlib": "https://github.com/FreakDev/instagram-bot-lib.git",
+    "node-json-db": "^0.8.1"
+  }
+}
