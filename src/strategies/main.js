@@ -41,7 +41,10 @@ class Likemode_classic extends Manager_state {
 
         this.jsonDb = new JsonDB("follow_db", true, true);
 
-        this.lastUnfollowCheckDate = new Date('1970-00-01')
+        this.lastUnfollowCheckDate = new Date('1970-00-01');
+
+        this.openedDays = this.config.opened_days
+        this.openedHours = this.config.opened_hours
     }
 
     /**
@@ -162,7 +165,8 @@ class Likemode_classic extends Manager_state {
         this.log.info('check unfollow')
 
         try {
-            if ((new Date()).getTime() - this.lastUnfollowCheckDate.getTime() < (24 * 60 * 60 * 1000)) {
+            let now = new Date()
+            if (now.getTime() - this.lastUnfollowCheckDate.getTime() < (24 * 60 * 60 * 1000)) {
                 this.log.info('last check done in less than 24 hours')
                 return;
             }
@@ -460,6 +464,19 @@ class Likemode_classic extends Manager_state {
         this.log.info("follow ok");
     }
 
+    isInOpennedHours (dateToCheck) {
+        const lt = (dtc, ref) => {
+            return dtc.getHours() < ref[0];
+        }
+        const gt = (dtc, ref) => {
+            return dtc.getHours() >= ref[0] && dtc.getMinutes() > ref[1];
+        }
+
+        return this.openedDays.indexOf(dateToCheck.getDay()) !== -1 && this.openedHours.filter(range => {
+             return gt(dateToCheck, range[0]) && lt(dateToCheck, range[1])
+        }).length > 0
+    }
+
     /**
      * LikemodeClassic Flow
      * =====================
@@ -493,6 +510,12 @@ class Likemode_classic extends Manager_state {
             this.log.info("comments : " + stats.comments);
             this.log.info("follow : " + stats.follow);
             this.log.info("----------------------------------");
+
+            if (!this.isInOpennedHours(today)) {
+                this.log.info('Sorry, we\'re closed')
+                await this.utils.sleep(this.utils.random_interval(5 * 60, 15 * 60));
+                continue;
+            }
 
             await this.check_unfollow();
 

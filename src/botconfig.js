@@ -22,13 +22,13 @@ module.exports = {
     // "bot_mode": "e_insta_bot",
     "bot_likeday_min": 800,      // work only in likemode_classic
     "bot_likeday_max": 900,      // work only in likemode_classic. In 2018 limit instagram is 1000/day
-    "bot_sleep_night": true,     // if you need stop bot in night 
-    "bot_start_sleep": "7:00",   // sleep from 00:00 to 7:00 am, work in likemode_realistic, comment_mode, likemode_superlike and likemode_competitor_users
-    "bot_fastlike_min": "15",    // min minutes of sleep after like 10-12 photo, work in likemode_realistic and likemode_superlike (superlike add 3 like/user, set 50min)
-    "bot_fastlike_max": "20",    // max minutes of sleep after like 10-12 photo, work in likemode_realistic and likemode_superlike (superlike add 3 like/user, set 60min)
-    "bot_superlike_n": 3,        // superlike number of likes for user
-    "bot_followday": 300,        // follow-defollow user/day, work in fdfmode_classic and fdfmode_defollowall
-    "bot_userwhitelist": [""],   // usernames without @ | don't defollow this users on follow-defollow mode, work in fdfmode_classic and fdfmode_defollowall
+    // "bot_sleep_night": true,     // if you need stop bot in night 
+    // "bot_start_sleep": "7:00",   // sleep from 00:00 to 7:00 am, work in likemode_realistic, comment_mode, likemode_superlike and likemode_competitor_users
+    // "bot_fastlike_min": "15",    // min minutes of sleep after like 10-12 photo, work in likemode_realistic and likemode_superlike (superlike add 3 like/user, set 50min)
+    // "bot_fastlike_max": "20",    // max minutes of sleep after like 10-12 photo, work in likemode_realistic and likemode_superlike (superlike add 3 like/user, set 60min)
+    // "bot_superlike_n": 3,        // superlike number of likes for user
+    // "bot_followday": 300,        // follow-defollow user/day, work in fdfmode_classic and fdfmode_defollowall
+    // "bot_userwhitelist": [""],   // usernames without @ | don't defollow this users on follow-defollow mode, work in fdfmode_classic and fdfmode_defollowall
     
     // "comment_mode": {
     //     "comments": {
@@ -36,9 +36,9 @@ module.exports = {
     //         "source": [],
     //     }
     // }
-    "likemode_competitor_users": {
-        "account": "", // without @
-    },
+    // "likemode_competitor_users": {
+    //     "account": "", // without @
+    // },
 
     // Puppeteer Configs
     // "chrome_headless": false,
@@ -65,6 +65,13 @@ module.exports = {
 
     "extend_strategies": __dirname + "/strategies/index.js",
     "bot_mode": "e_insta_bot",
+
+    "opened_days": [1, 2, 3, 4, 5], // monday to friday
+    "opened_hours": [
+        [[10, 0], [13, 30]],
+        [[14, 30], [18, 30]]
+    ],
+
     "chrome_headless": false,
 
     "follow_mode": {
