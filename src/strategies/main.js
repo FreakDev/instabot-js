@@ -41,7 +41,11 @@ class Likemode_classic extends Manager_state {
 
         this.jsonDb = new JsonDB("follow_db", true, true);
 
-        this.lastUnfollowCheckDate = new Date('1970-00-01');
+        let dateString = '1970-00-01'
+        try {
+            dateString = this.jsonDb.getData('/lastCheck');
+        } catch (e) {}
+        this.lastUnfollowCheckDate = new Date(dateString);
 
         this.openedDays = this.config.opened_days
         this.openedHours = this.config.opened_hours
@@ -172,11 +176,19 @@ class Likemode_classic extends Manager_state {
             }
 
             this.lastUnfollowCheckDate = new Date();
+            this.jsonDb.push('/lastCheck', this.lastUnfollowCheckDate.getFullYear() + '-' + (this.lastUnfollowCheckDate.getMonth() + 1).toString().padStart(2, '0') + '-' + this.lastUnfollowCheckDate.getDate().toString().padStart(2, '0'))
 
             await this.open_account_page();
 
-            let list = await this.get_followers();
-    
+            let data = [];
+            try {
+                data = this.jsonDb.getData('/followers')
+            } catch(e) {}
+            if (!data.length) {
+                data = await this.get_followers();
+            }
+            this.jsonDb.push('/followers', data);
+
             let toCheck = this.jsonDb.getData("/following").filter(function (profile) {
                 let fromDate = new Date(profile.following_date)
                 let now = new Date()
