@@ -481,11 +481,11 @@ class Likemode_classic extends Manager_state {
             return dtc.getHours() < ref[0];
         }
         const gt = (dtc, ref) => {
-            return dtc.getHours() >= ref[0] && dtc.getMinutes() > ref[1];
+            return dtc.getHours() > ref[0] || (dtc.getHours() == ref[0] && dtc.getMinutes() > ref[1]);
         }
 
         return this.openedDays.indexOf(dateToCheck.getDay()) !== -1 && this.openedHours.filter(range => {
-             return gt(dateToCheck, range[0]) && lt(dateToCheck, range[1])
+            return gt(dateToCheck, range[0]) && lt(dateToCheck, range[1])
         }).length > 0
     }
 
