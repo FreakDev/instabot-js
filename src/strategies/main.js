@@ -319,9 +319,11 @@ class Likemode_classic extends Manager_state {
         this.log.info("try heart like");
 
         try {
-            await this.bot.waitForSelector("main article:nth-child(1) section:nth-child(1) button:nth-child(1)");
-            let button = await this.bot.$("main article:nth-child(1) section:nth-child(1) button:nth-child(1)");
+            let btnSelector = "main article:nth-child(1) section:nth-child(1) button:nth-child(1)"
+            let button = await this.bot.$(btnSelector);
             let heart = await this.bot.evaluate(() => document.querySelector("main article:nth-child(1) section:nth-child(1) button:nth-child(1) span").className);
+
+            await this.bot.waitForSelector(btnSelector);
 
             if (heart.indexOf('filled') === -1) {
                 await button.click();
