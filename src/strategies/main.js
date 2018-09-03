@@ -468,7 +468,7 @@ class Likemode_classic extends Manager_state {
             this.log.debug(e)
         }
 
-        if (followingData && followingData.length)
+        if (followingData && followingData.length && followingData.findIndex(el => el.url === profile.url) === -1)
             this.jsonDb.push("/following[]", profile);
         else
             this.jsonDb.push("/following", [profile]);
