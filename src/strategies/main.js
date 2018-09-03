@@ -198,9 +198,13 @@ class Likemode_classic extends Manager_state {
                 i ++;
             }
     
-            this.jsonDb.push('/following', this.jsonDb.getData("/following").filter(follower => {
-                return toCheck.findIndex(el => el.url === follower.url) === -1
-            }))
+            let followingData = this.jsonDb.getData("/following")
+
+            if (followingData.length) {
+                this.jsonDb.push('/following', followingData.filter(follower => {
+                    return toCheck.findIndex(el => el.url === follower.url) === -1
+                }))    
+            }
         } catch(e) {
             this.log.debug(e)
             console.log(e)
@@ -456,7 +460,15 @@ class Likemode_classic extends Manager_state {
             url: authorProfileUrl,
             following_date: today.getFullYear() + '-' + (today.getMonth() + 1).toString().padStart(2, '0') + '-' + today.getDate().toString().padStart(2, '0')
         }
-        if (this.jsonDb.getData("/following").length)
+
+        let followingData = null
+        try {
+            followingData = this.jsonDb.getData("/following")
+        } catch (e) {
+            this.log.debug(e)
+        }
+
+        if (followingData && followingData.length)
             this.jsonDb.push("/following[]", profile);
         else
             this.jsonDb.push("/following", [profile]);
