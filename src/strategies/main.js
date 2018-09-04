@@ -585,7 +585,7 @@ class Likemode_classic extends Manager_state {
 
         do {
             today = new Date();
-            t1 = new Date(today.getFullYear(), today.getMonth(), today.getDate(), today.getHours(), today.getMinutes(), today.getSeconds());
+            // t1 = new Date(today.getFullYear(), today.getMonth(), today.getDate(), today.getHours(), today.getMinutes(), today.getSeconds());
 
             this.log.info("loading... " + new Date(today.getFullYear(), today.getMonth(), today.getDate(), today.getHours(), today.getMinutes(), today.getSeconds()));
             this.log.info("cache array size " + this.cache_hash_tags.length);
@@ -640,16 +640,16 @@ class Likemode_classic extends Manager_state {
             if (this.cache_hash_tags.length < 9) //remove popular photos
                 this.cache_hash_tags = [];
 
-            today = new Date();
-            t2 = new Date(today.getFullYear(), today.getMonth(), today.getDate(), today.getHours(), today.getMinutes(), today.getSeconds());
-            sec = Math.abs((t1.getTime() - t2.getTime()) / 1000);
+            // today = new Date();
+            // t2 = new Date(today.getFullYear(), today.getMonth(), today.getDate(), today.getHours(), today.getMinutes(), today.getSeconds());
+            // sec = Math.abs((t1.getTime() - t2.getTime()) / 1000);
 
-            if (sec < sec_min && this.get_status() === 1) {
-                this.log.info("seconds of loop " + sec + "... for miss ban bot wait " + (sec_min - sec) + "-" + (sec_max - sec));
-                await this.utils.sleep(this.utils.random_interval(sec_min - sec, sec_max - sec));
-            } else {
-                this.cache_hash_tags = [];
-            }
+            // if (sec < sec_min && this.get_status() === 1) {
+            //     this.log.info("seconds of loop " + sec + "... for miss ban bot wait " + (sec_min - sec) + "-" + (sec_max - sec));
+            //     await this.utils.sleep(this.utils.random_interval(sec_min - sec, sec_max - sec));
+            // } else {
+            //     this.cache_hash_tags = [];
+            // }
         } while (true);
     }
 
