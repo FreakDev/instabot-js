@@ -457,12 +457,9 @@ class Likemode_classic extends Manager_state {
                 }
 
                 if (this.is_error()) {
-                    this.log.warning("Failed...");
-                    this.log.warning("error bot :( not comment under photo, now bot sleep 5-10min");
-                    this.log.warning("You are in possible soft ban... If this message appear all time stop bot for 24h...");
-                    await this.utils.sleep(this.utils.random_interval(60 * 5, 60 * 10));
+                    return false
                 } else if (this.is_ok()) {
-                    this.log.info("OK");
+                    return true
                 }
             } catch (err) {
                 if (this.utils.is_debug())
@@ -494,6 +491,11 @@ class Likemode_classic extends Manager_state {
         }
             
         try {
+            if (await this.check_leave_comment()) {
+                this.log.info('already commented')
+                return;
+            }
+
             let textarea = await this.bot.$(comment_area_elem);
             if (textarea !== null) {
                 this.emit(this.STATE_EVENTS.CHANGE_STATUS, this.STATE.OK);
@@ -528,8 +530,15 @@ class Likemode_classic extends Manager_state {
         await this.utils.screenshot(this.LOG_NAME, "last_comment");
 
         await this.utils.sleep(this.utils.random_interval(4, 8));
-        await this.check_leave_comment();
+        if (!(await this.check_leave_comment())) {
+            this.log.warning("Failed...");
+            this.log.warning("error bot :( not comment under photo, now bot sleep 5-10min");
+            this.log.warning("You are in possible soft ban... If this message appear all time stop bot for 24h...");
+            await this.utils.sleep(this.utils.random_interval(60 * 5, 60 * 10));
+        } else {
             this.botStats.comments++;
+            this.log.info('OK')
+        }
 
         await this.utils.sleep(this.utils.random_interval(2, 5));
         await this.utils.screenshot(this.LOG_NAME, "last_comment_after");
