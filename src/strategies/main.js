@@ -315,12 +315,19 @@ class Likemode_classic extends Manager_state {
         await this.utils.sleep(this.utils.random_interval(4, 8));
     }
 
+    toInt(txt) {
+        txt = txt.replace(',', '')
+        kilo = txt.match(/\./g).length
+        txt.replace('.', '')
+        return parseInt(txt) * (kilo * 1000)
+    }
+
     async get_nb_followers() {
-        return parseInt(await this.bot.evaluate(() => document.querySelector("main header ul li:nth-child(2) span").innerText.replace(',', '')));
+        return toInt(await this.bot.evaluate(() => document.querySelector("main header ul li:nth-child(2) span").innerText.replace(',', '')));
     }
 
     async get_nb_following() {
-        return parseInt(await this.bot.evaluate(() => document.querySelector("main header ul li:nth-child(3) span").innerText.replace(',', '')));
+        return toInt(await this.bot.evaluate(() => document.querySelector("main header ul li:nth-child(3) span").innerText.replace(',', '')));
     }
 
     async fetch_profile_stats() {
