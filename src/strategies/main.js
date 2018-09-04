@@ -471,6 +471,13 @@ class Likemode_classic extends Manager_state {
         this.log.info("try leave comment");
         let comment_area_elem = "main article:nth-child(1) section:nth-child(5) form textarea";
 
+        if ( this.cache_profile_stats 
+            && this.cache_profile_stats.followers >= this.config.comment_mode.min_followers 
+            && this.cache_profile_stats.followers <= this.config.comment_mode.max_followers ) {
+            this.log.info('user doesn\'t match followers requirements')
+            return;
+        }
+            
         try {
             let textarea = await this.bot.$(comment_area_elem);
             if (textarea !== null) {
@@ -516,39 +523,52 @@ class Likemode_classic extends Manager_state {
     async follow () {
         this.log.info("try to follow");
 
-        // find author profile url
-        const author_elem = "main article:nth-child(1) header:nth-child(1) a";
-        const follow_elem = "main article:nth-child(1) header:nth-child(1) button";
-
-        await this.bot.waitForSelector(author_elem);
-        let authorLinkElem = await this.bot.$(author_elem);
-        let authorLink = await authorLinkElem.getProperty('href');
-        let authorProfileUrl = authorLink._remoteObject.value;
-
-        // click follow
-        await this.bot.waitForSelector(follow_elem);
-        let followButton = await this.bot.$(follow_elem);
-        await followButton.click()
-
-        const today = new Date()
-        let profile = {
-            url: authorProfileUrl,
-            following_date: today.getFullYear() + '-' + (today.getMonth() + 1).toString().padStart(2, '0') + '-' + today.getDate().toString().padStart(2, '0')
+        if ( this.cache_profile_stats 
+            && this.cache_profile_stats.followers >= this.config.follow_mode.min_followers 
+            && this.cache_profile_stats.followers <= this.config.follow_mode.max_followers ) {
+            this.log.info('user doesn\'t match followers requirements')
+            return;
         }
 
-        let followingData = null
         try {
-            followingData = this.jsonDb.getData("/following")
-        } catch (e) {
+            // find author profile url
+            const author_elem = "main article:nth-child(1) header:nth-child(1) a";
+            const follow_elem = "main article:nth-child(1) header:nth-child(1) button";
+
+            await this.bot.waitForSelector(author_elem);
+            let authorLinkElem = await this.bot.$(author_elem);
+            let authorLink = await authorLinkElem.getProperty('href');
+            let authorProfileUrl = authorLink._remoteObject.value;
+
+            // click follow
+            await this.bot.waitForSelector(follow_elem);
+            let followButton = await this.bot.$(follow_elem);
+            await followButton.click()
+
+            const today = new Date()
+            let profile = {
+                url: authorProfileUrl,
+                following_date: today.getFullYear() + '-' + (today.getMonth() + 1).toString().padStart(2, '0') + '-' + today.getDate().toString().padStart(2, '0')
+            }
+
+            let followingData = null
+            try {
+                followingData = this.jsonDb.getData("/following")
+            } catch (e) {
+                this.log.debug(e)
+            }
+
+            if (followingData && followingData.length && followingData.findIndex(el => el.url === profile.url) === -1)
+                this.jsonDb.push("/following[]", profile);
+            else
+                this.jsonDb.push("/following", [profile]);
+
+            this.log.info("follow ok");
+        } catch(e) {
             this.log.debug(e)
+            console.log(e)
         }
 
-        if (followingData && followingData.length && followingData.findIndex(el => el.url === profile.url) === -1)
-            this.jsonDb.push("/following[]", profile);
-        else
-            this.jsonDb.push("/following", [profile]);
-
-        this.log.info("follow ok");
     }
 
     isInOpennedHours (dateToCheck) {
