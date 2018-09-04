@@ -49,6 +49,12 @@ class Likemode_classic extends Manager_state {
 
         this.openedDays = this.config.opened_days
         this.openedHours = this.config.opened_hours
+
+        this.cache_profile_stats = {
+            username: '',
+            followers: 0,
+            following: 0
+        }
     }
 
     /**
@@ -309,6 +315,61 @@ class Likemode_classic extends Manager_state {
         await this.utils.sleep(this.utils.random_interval(4, 8));
     }
 
+    async get_nb_followers() {
+        return parseInt(await this.bot.evaluate(() => document.querySelector("main header ul li:nth-child(2) span").innerText.replace(',', '')));
+    }
+
+    async get_nb_following() {
+        return parseInt(await this.bot.evaluate(() => document.querySelector("main header ul li:nth-child(3) span").innerText.replace(',', '')));
+    }
+
+    async fetch_profile_stats() {
+        const currentUrl = this.bot.url()
+
+        try {
+            // find author profile url
+            const author_elem = "main article:nth-child(1) header:nth-child(1) a";
+
+            await this.bot.waitForSelector(author_elem);
+            let authorLinkElem = await this.bot.$(author_elem);
+            let authorLink = await authorLinkElem.getProperty('href');
+            let authorProfileUrl = authorLink._remoteObject.value;
+
+            await this.utils.sleep(this.utils.random_interval(2, 3));
+            await this.bot.waitForSelector(author_elem);
+            await this.utils.sleep(this.utils.random_interval(4, 8));
+            
+            // let author = await this.bot.$(author_elem);
+            // console.log(await this.bot.$(author_elem));
+
+            // let authorLinkElem = await this.bot.evaluate( () => (document.querySelector("main article:nth-child(1) header:nth-child(1) a") ))
+            let newUrl = authorProfileUrl;
+    
+            await this.bot.goto(newUrl);
+    
+            await this.utils.sleep(this.utils.random_interval(2, 3));
+        
+            let username = newUrl.substr(0, newUrl.length - 1)
+            username = username.substr(username.lastIndexOf('/'))
+
+            this.cache_profile_stats = {
+                username,
+                followers: await this.get_nb_followers(),
+                following: await this.get_nb_following()
+            };
+
+            console.log(this.cache_profile_stats);
+        
+        } catch(e) {
+            this.log.error(e)
+            console.log(e)
+        }
+
+        await this.bot.goto(currentUrl)
+        await this.utils.sleep(this.utils.random_interval(4, 8));    
+
+    }
+
     /**
      * likemode_classic: Love me
      * =====================
@@ -552,6 +613,8 @@ class Likemode_classic extends Manager_state {
 
             await this.like_get_urlpic();
             await this.utils.sleep(this.utils.random_interval(4, 8));
+
+            await this.fetch_profile_stats();
 
             await this.like_click_heart();
             stats.likes++
