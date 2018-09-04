@@ -316,18 +316,19 @@ class Likemode_classic extends Manager_state {
     }
 
     toInt(txt) {
-        txt = txt.replace(',', '')
-        kilo = txt.match(/\./g).length
-        txt.replace('.', '')
-        return parseInt(txt) * (kilo * 1000)
+        txt = txt.replace(',', '');
+        let dot = txt.match(/\./g);
+        let kilo = dot ? dot.length : 0;
+        let count = parseInt(txt.replace('.', ''));
+        return kilo === 0 ? count : count * (kilo * 1000)
     }
 
     async get_nb_followers() {
-        return toInt(await this.bot.evaluate(() => document.querySelector("main header ul li:nth-child(2) span").innerText.replace(',', '')));
+        return this.toInt(await this.bot.evaluate(() => document.querySelector("main header ul li:nth-child(2) span").innerText.replace(',', '')));
     }
 
     async get_nb_following() {
-        return toInt(await this.bot.evaluate(() => document.querySelector("main header ul li:nth-child(3) span").innerText.replace(',', '')));
+        return this.toInt(await this.bot.evaluate(() => document.querySelector("main header ul li:nth-child(3) span").innerText.replace(',', '')));
     }
 
     async fetch_profile_stats() {
@@ -478,11 +479,11 @@ class Likemode_classic extends Manager_state {
         this.log.info("try leave comment");
         let comment_area_elem = "main article:nth-child(1) section:nth-child(5) form textarea";
 
-        if ( this.cache_profile_stats 
-            && this.cache_profile_stats.followers >= this.config.comment_mode.min_followers 
-            && this.cache_profile_stats.followers <= this.config.comment_mode.max_followers ) {
-            this.log.info('user doesn\'t match followers requirements')
-            return;
+        if ( !this.cache_profile_stats.username 
+            || (this.cache_profile_stats.followers < this.config.comment_mode.min_followers 
+            && this.cache_profile_stats.followers > this.config.comment_mode.max_followers )) {
+                this.log.info('user doesn\'t match followers requirements')
+                return;
         }
             
         try {
@@ -530,11 +531,11 @@ class Likemode_classic extends Manager_state {
     async follow () {
         this.log.info("try to follow");
 
-        if ( this.cache_profile_stats 
-            && this.cache_profile_stats.followers >= this.config.follow_mode.min_followers 
-            && this.cache_profile_stats.followers <= this.config.follow_mode.max_followers ) {
-            this.log.info('user doesn\'t match followers requirements')
-            return;
+        if ( !this.cache_profile_stats.username
+            || (this.cache_profile_stats.followers < this.config.follow_mode.min_followers 
+            && this.cache_profile_stats.followers > this.config.follow_mode.max_followers )) {
+                this.log.info('user doesn\'t match followers requirements')
+                return;
         }
 
         try {
