@@ -54,7 +54,13 @@ class Likemode_classic extends Manager_state {
             username: '',
             followers: 0,
             following: 0
-        }
+        };
+
+        this.botStats = {
+            likes: 0,
+            comments: 0,
+            follow: 0
+        };
     }
 
     /**
@@ -396,6 +402,7 @@ class Likemode_classic extends Manager_state {
 
             if (heart.indexOf('filled') === -1) {
                 await button.click();
+                this.botStats.likes++;
                 this.log.info("<3");    
             } else {
                 this.log.info("already liked")
@@ -522,6 +529,7 @@ class Likemode_classic extends Manager_state {
 
         await this.utils.sleep(this.utils.random_interval(4, 8));
         await this.check_leave_comment();
+            this.botStats.comments++;
 
         await this.utils.sleep(this.utils.random_interval(2, 5));
         await this.utils.screenshot(this.LOG_NAME, "last_comment_after");
@@ -552,6 +560,8 @@ class Likemode_classic extends Manager_state {
             await this.bot.waitForSelector(follow_elem);
             let followButton = await this.bot.$(follow_elem);
             await followButton.click()
+
+            this.botStats.follow++;
 
             const today = new Date()
             let profile = {
@@ -605,11 +615,7 @@ class Likemode_classic extends Manager_state {
         sec_min = parseInt(86400 / this.config.bot_likeday_max);
         sec_max = parseInt(86400 / this.config.bot_likeday_min);
 
-        let stats = {
-            likes: 0,
-            comments: 0,
-            follow: 0
-        }
+        let stats = this.botStats
 
         do {
             today = new Date();
@@ -617,14 +623,6 @@ class Likemode_classic extends Manager_state {
 
             this.log.info("loading... " + new Date(today.getFullYear(), today.getMonth(), today.getDate(), today.getHours(), today.getMinutes(), today.getSeconds()));
             this.log.info("cache array size " + this.cache_hash_tags.length);
-
-            this.log.info("----------------------------------");
-            this.log.info(" STATS");
-            this.log.info("----------------------------------");
-            this.log.info("likes : " + stats.likes);
-            this.log.info("comments : " + stats.comments);
-            this.log.info("follow : " + stats.follow);
-            this.log.info("----------------------------------");
 
             if (!this.isInOpennedHours(today)) {
                 this.log.info('Sorry, we\'re closed')
@@ -645,7 +643,6 @@ class Likemode_classic extends Manager_state {
             await this.fetch_profile_stats();
 
             await this.like_click_heart();
-            stats.likes++
 
             await this.utils.sleep(this.utils.random_interval(1, 3));
 
@@ -654,7 +651,6 @@ class Likemode_classic extends Manager_state {
             randomRate = this.utils.random_interval(0, 100) / 1000;
             if (randomRate <= this.commentRate) {
                 await this.comment();
-                stats.comments++
             }
             
             await this.utils.sleep(this.utils.random_interval(1, 3));
@@ -662,8 +658,16 @@ class Likemode_classic extends Manager_state {
             randomRate = this.utils.random_interval(0, 100) / 1000;
             if (randomRate <= this.followRate) {
                 await this.follow();
-                stats.follow++
             }
+
+            this.log.info("----------------------------------");
+            this.log.info(" STATS");
+            this.log.info("----------------------------------");
+            this.log.info("likes : " + stats.likes);
+            this.log.info("comments : " + stats.comments);
+            this.log.info("follow : " + stats.follow);
+            this.log.info("----------------------------------");
+
 
             if (this.cache_hash_tags.length < 9) //remove popular photos
                 this.cache_hash_tags = [];
