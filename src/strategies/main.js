@@ -126,6 +126,7 @@ class Likemode_classic extends Manager_state {
         this.log.info("get followers");
 
         if (this.cache_hash_tags.length <= 0) {
+            // from my profile page
             let selector_followers_count = "main header section ul li:nth-child(2) a";
             await this.bot.waitForSelector(selector_followers_count);
             let area_count_followers = await this.bot.$(selector_followers_count);
@@ -371,8 +372,6 @@ class Likemode_classic extends Manager_state {
                 followers: await this.get_nb_followers(),
                 following: await this.get_nb_following()
             };
-
-            console.log(this.cache_profile_stats);
         
         } catch(e) {
             this.log.error(e)
