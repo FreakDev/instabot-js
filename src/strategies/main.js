@@ -80,7 +80,7 @@ class Likemode_classic extends Manager_state {
             this.log.error(`goto ${err}`);
         }
 
-        await this.utils.sleep(this.utils.random_interval(4, 8));
+        await this.utils.sleep(this.utils.random_interval(2, 4));
 
         await this.utils.screenshot(this.LOG_NAME, "account_page");
     }
@@ -226,7 +226,7 @@ class Likemode_classic extends Manager_state {
             let followingData = this.jsonDb.getData("/following")
 
             if (followingData.length) {
-                this.jsonDb.push('/following', followingData.filter(follower => {
+                this.jsonDb.push('/following[]', followingData.filter(follower => {
                     return toCheck.findIndex(el => el.url === follower.url) === -1
                 }))    
             }
@@ -266,7 +266,7 @@ class Likemode_classic extends Manager_state {
             this.log.error(`goto ${err}`);
         }
 
-        await this.utils.sleep(this.utils.random_interval(4, 8));
+        await this.utils.sleep(this.utils.random_interval(2, 4));
 
         await this.utils.screenshot(this.LOG_NAME, "last_hashtag");
     }
@@ -299,7 +299,7 @@ class Likemode_classic extends Manager_state {
                 if (typeof photo_url === "undefined")
                     this.log.warning("check if current hashtag have photos, you write it good in config.js? Bot go to next hashtag.");
 
-                await this.utils.sleep(this.utils.random_interval(4, 8));
+                await this.utils.sleep(this.utils.random_interval(2, 4));
 
                 await this.bot.goto(photo_url);
             } catch (err) {
@@ -311,7 +311,7 @@ class Likemode_classic extends Manager_state {
             photo_url = this.get_photo_url();
 
             this.log.info(`current photo url from cache ${photo_url}`);
-            await this.utils.sleep(this.utils.random_interval(4, 8));
+            await this.utils.sleep(this.utils.random_interval(2, 4));
 
             try {
                 await this.bot.goto(photo_url);
@@ -319,7 +319,7 @@ class Likemode_classic extends Manager_state {
                 this.log.error(`goto ${err}`);
             }
         }
-        await this.utils.sleep(this.utils.random_interval(4, 8));
+        await this.utils.sleep(this.utils.random_interval(2, 4));
     }
 
     toInt(txt) {
@@ -352,7 +352,7 @@ class Likemode_classic extends Manager_state {
 
             await this.utils.sleep(this.utils.random_interval(2, 3));
             await this.bot.waitForSelector(author_elem);
-            await this.utils.sleep(this.utils.random_interval(4, 8));
+            await this.utils.sleep(this.utils.random_interval(2, 4));
             
             // let author = await this.bot.$(author_elem);
             // console.log(await this.bot.$(author_elem));
@@ -379,7 +379,7 @@ class Likemode_classic extends Manager_state {
         }
 
         await this.bot.goto(currentUrl)
-        await this.utils.sleep(this.utils.random_interval(4, 8));    
+        await this.utils.sleep(this.utils.random_interval(2, 4));    
 
     }
 
@@ -415,7 +415,7 @@ class Likemode_classic extends Manager_state {
             this.emit(this.STATE_EVENTS.CHANGE_STATUS, this.STATE.ERROR);
         }
 
-        await this.utils.sleep(this.utils.random_interval(4, 8));
+        await this.utils.sleep(this.utils.random_interval(2, 4));
         await this.utils.screenshot(this.LOG_NAME, "last_like_after");
     }
 
@@ -520,15 +520,15 @@ class Likemode_classic extends Manager_state {
             this.emit(this.STATE_EVENTS.CHANGE_STATUS, this.STATE.ERROR);
         }
 
-        await this.utils.sleep(this.utils.random_interval(4, 8));
+        await this.utils.sleep(this.utils.random_interval(2, 4));
 
         this.bot.reload();
 
-        await this.utils.sleep(this.utils.random_interval(4, 8));
+        await this.utils.sleep(this.utils.random_interval(2, 4));
 
         await this.utils.screenshot(this.LOG_NAME, "last_comment");
 
-        await this.utils.sleep(this.utils.random_interval(4, 8));
+        await this.utils.sleep(this.utils.random_interval(2, 4));
         if (!(await this.check_leave_comment())) {
             this.log.warning("Failed...");
             this.log.warning("error bot :( not comment under photo, now bot sleep 5-10min");
@@ -643,10 +643,10 @@ class Likemode_classic extends Manager_state {
             if (this.cache_hash_tags.length <= 0)
                 await this.like_open_hashtagpage();
 
-            await this.utils.sleep(this.utils.random_interval(4, 8));
+            await this.utils.sleep(this.utils.random_interval(2, 4));
 
             await this.like_get_urlpic();
-            await this.utils.sleep(this.utils.random_interval(4, 8));
+            await this.utils.sleep(this.utils.random_interval(2, 4));
 
             await this.fetch_profile_stats();
 
