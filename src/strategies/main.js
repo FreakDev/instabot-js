@@ -245,7 +245,8 @@ class Likemode_classic extends Manager_state {
         let photo_url = "";
         do {
             photo_url = this.cache_hash_tags.pop();
-        } while ((typeof photo_url === "undefined" || photo_url.indexOf("tagged") === -1) && this.cache_hash_tags.length > 0);
+            this.log.debug(photo_url);
+        } while (typeof photo_url === "undefined" || photo_url.indexOf("tagged") !== -1);
 
         return photo_url;
     }
